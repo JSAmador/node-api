@@ -4,6 +4,7 @@ const _= require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
+const jwt = require('jsonwebtoken');
 
 // Local files
 var {mongoose} = require('./db/mongoose');
@@ -89,6 +90,21 @@ app.patch('/todos/:id', (req, res) => {
   }, (err) => {
     res.status(400).send();
   })
+});
+
+
+// Users
+
+app.post('/register', (req, res) => {
+  var body = _.pick(req.body, ['email', 'password'])
+  var user = new User(body);
+  user.save().then(() => {
+    return user.generateAuthToken();
+  }).then((token)=>{
+    res.header('x-auth', token).send(user);
+  }).catch((err)=>{
+    res.status(400).send(err);
+  });
 });
 
 
