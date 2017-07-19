@@ -40,14 +40,14 @@ describe('POST /todos', () => {
       .post('/todos')
       .set('x-auth', users[0].tokens[0].token)
       .send({})
-      .expect(200)
+      .expect(400)
       .end((err, res) => {
         if (err) {
           return done(err);
         }
 
         Todo.find().then((todos) => {
-          expect(todos.length).toBe(3);
+          expect(todos.length).toBe(2);
           done();
         }).catch((e) => done(e));
       });
@@ -254,7 +254,7 @@ describe('POST /users', () => {
     var password = '123mnb!';
 
     request(app)
-      .post('/register')
+      .post('/users')
       .send({email, password})
       .expect(200)
       .expect((res) => {
@@ -277,7 +277,7 @@ describe('POST /users', () => {
 
   it('should return validation errors if request invalid', (done) => {
     request(app)
-      .post('/register')
+      .post('/users')
       .send({
         email: 'and',
         password: '123'
@@ -288,7 +288,7 @@ describe('POST /users', () => {
 
   it('should not create user if email in use', (done) => {
     request(app)
-      .post('/register')
+      .post('/users')
       .send({
         email: users[0].email,
         password: 'Password123!'
